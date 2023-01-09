@@ -13,13 +13,11 @@ import {
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact } from '../../redux/operations/operations';
-import { getFilteredContacts } from '../../selectors/selectors';
+import { getFilteredContacts, selectIsLoading } from '../../selectors/selectors';
 
 function Contacts({ children }) {
   const dispatch = useDispatch();
-  // const contacts = useSelector(getContacts);
-  // const filter = useSelector(getFilter);
-  // const filteredContacts = contacts.filter(({ name }) => name.toLowerCase().includes(filter));
+  const isLoading = useSelector(selectIsLoading);
   const filteredContacts = useSelector(getFilteredContacts);
   return (
     <div>
@@ -33,6 +31,7 @@ function Contacts({ children }) {
                   edge="end"
                   aria-label="delete"
                   onClick={() => dispatch(deleteContact(id))}
+                  disabled={isLoading}
                 >
                   <DeleteIcon />
                 </IconButton>

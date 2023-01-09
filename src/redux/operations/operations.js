@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { notifyError, notifySuccess } from '../../components/App';
 
 axios.defaults.baseURL = 'https://63b6f1151907f863aa077f2b.mockapi.io';
 
@@ -8,25 +9,38 @@ export const fetchContacts = createAsyncThunk('contacts/fetch', async (_, thunkA
     const { data } = await axios.get('/contacts');
     return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error);
+    notifyError(error.message || 'Щось пішло не так...');
+    return thunkAPI.rejectWithValue(error.message);
   }
 });
 
 export const addContact = createAsyncThunk('contacts/add', async (contact, thunkAPI) => {
   try {
     const { data } = await axios.post('/contacts', contact);
+    notifySuccess(
+      <span>
+        Контакт <b>{contact.name}</b> створений
+      </span>
+    );
     return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error);
+    notifyError(error.message || 'Щось пішло не так...');
+    return thunkAPI.rejectWithValue(error.message);
   }
 });
 
 export const deleteContact = createAsyncThunk('contacts/delete', async (id, thunkAPI) => {
   try {
     const { data } = await axios.delete(`/contacts/${id}`);
+    notifySuccess(
+      <span>
+        Контакт <b>{data.name}</b> видалений
+      </span>
+    );
     return data.id;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error);
+    notifyError(error.message || 'Щось пішло не так...');
+    return thunkAPI.rejectWithValue(error.message);
   }
 });
 

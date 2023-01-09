@@ -4,8 +4,9 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { addContact } from '../../redux/operations/operations';
-import { getContacts } from '../../selectors/selectors';
+import { getContacts, selectIsLoading } from '../../selectors/selectors';
 import { formatPhoneNumber } from '../../utils/formatPhoneNumber';
+import { notifyError } from '../App';
 
 const schema = yup.object().shape({
   name: yup
@@ -24,6 +25,7 @@ const schema = yup.object().shape({
 
 const NewContactForm = () => {
   const contacts = useSelector(getContacts);
+  const isLoading = useSelector(selectIsLoading);
   const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
@@ -33,7 +35,7 @@ const NewContactForm = () => {
     validationSchema: schema,
     onSubmit: ({ name, number }, { setSubmitting, resetForm }) => {
       if (contacts.some(contact => contact.name.toLowerCase() === name.toLowerCase())) {
-        alert('Контакт з таким іменем вже існує');
+        notifyError('Контакт з таким іменем вже існує');
         setSubmitting(false);
         return;
       }
@@ -77,7 +79,7 @@ const NewContactForm = () => {
           variant="standard"
           sx={{ mr: '20px', mb: '20px', width: '400px' }}
         />
-        <Button type="submit" sx={{ display: 'block' }}>
+        <Button type="submit" sx={{ display: 'block' }} disabled={isLoading}>
           Додати до записника
         </Button>
       </form>
